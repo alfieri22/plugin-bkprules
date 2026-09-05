@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "workspaceOpen": [
+      {
+        "command": "node ./scripts/sync.mjs --full --root ${BACKUP_ROOT}"
+      }
+    ],
+    "sessionStart": [
+      {
+        "command": "node ./scripts/sync.mjs --full --root ${BACKUP_ROOT}"
+      }
+    ],
+    "afterFileEdit": [
+      {
+        "command": "node ./scripts/sync.mjs --incremental --root ${BACKUP_ROOT}"
+      }
+    ],
+    "afterTabFileEdit": [
+      {
+        "command": "node ./scripts/sync.mjs --incremental --root ${BACKUP_ROOT}"
+      }
+    ],
+    "sessionEnd": [
+      {
+        "command": "node ./scripts/sync.mjs --full --root ${BACKUP_ROOT}"
+      }
+    ]
+  }
+}

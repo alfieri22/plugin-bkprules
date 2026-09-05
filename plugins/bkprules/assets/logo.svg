@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="blueGrad" x1="128" y1="24" x2="128" y2="232" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#7AD0FF"/>
+      <stop offset="100%" stop-color="#1860D8"/>
+    </linearGradient>
+    <linearGradient id="cloudGrad" x1="168" y1="156" x2="220" y2="228" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#6EC8FF"/>
+      <stop offset="100%" stop-color="#1860D8"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M 52 168 A 90 90 0 1 0 56 78"
+    fill="none"
+    stroke="url(#blueGrad)"
+    stroke-width="22"
+    stroke-linecap="round"/>
+  <path
+    d="M 78 48 L 52 78 L 88 92"
+    fill="none"
+    stroke="url(#blueGrad)"
+    stroke-width="22"
+    stroke-linecap="round"
+    stroke-linejoin="round"/>
+
+  <path
+    d="M 86 52 H 146 L 184 90 V 194 A 16 16 0 0 1 168 210 H 86 A 16 16 0 0 1 70 194 V 68 A 16 16 0 0 1 86 52 Z"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="11"
+    stroke-linejoin="round"/>
+  <path
+    d="M 146 52 V 90 H 184"
+    fill="none"
+    stroke="#FFFFFF"
+    stroke-width="11"
+    stroke-linejoin="round"/>
+
+  <g fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 106 106 L 90 128 L 106 150"/>
+    <path d="M 150 106 L 166 128 L 150 150"/>
+    <path d="M 140 100 L 122 156"/>
+  </g>
+
+  <g stroke="#FFFFFF" stroke-width="9" stroke-linecap="round">
+    <path d="M 100 170 H 152"/>
+    <path d="M 100 188 H 152"/>
+  </g>
+
+  <path
+    d="M 176 214
+       c -15 0 -28 -9 -31 -22
+       c -13 -2 -23 -13 -23 -26
+       c 0 -15 12 -27 27 -27
+       c 4 -12 15 -21 28 -21
+       c 12 0 23 7 28 17
+       c 3 -1 6 -1 9 -1
+       c 14 0 26 11 26 25
+       c 0 2 0 4 -1 5
+       c 11 4 19 14 19 26
+       c 0 15 -12 26 -27 26
+       Z"
+    fill="url(#cloudGrad)"/>
+
+  <g fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 190 204 V 170"/>
+    <path d="M 174 184 L 190 164 L 206 184"/>
+  </g>
+</svg>

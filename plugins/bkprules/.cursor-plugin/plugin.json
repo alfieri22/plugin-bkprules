@@ -1,0 +1,30 @@
+{
+  "name": "bkprules",
+  "displayName": "BKPrules",
+  "version": "0.1.0",
+  "description": "Automatic backup of each project's .cursor folder (rules, commands, hooks) to a local folder on your machine.",
+  "author": {
+    "name": "khube"
+  },
+  "license": "MIT",
+  "keywords": ["backup", "cursor", "rules", "hooks"],
+  "logo": "assets/logo.svg",
+  "variables": {
+    "type": "object",
+    "properties": {
+      "BACKUP_ROOT": {
+        "type": "string",
+        "title": "Pasta de backup",
+        "description": "Pasta na maquina onde os backups de .cursor serao salvos"
+      },
+      "ADD_TO_GITIGNORE": {
+        "type": "string",
+        "title": "Adicionar .cursor ao .gitignore",
+        "description": "true ou false. Se true, adiciona .cursor/ ao .gitignore dos projetos abertos no sync completo.",
+        "enum": ["true", "false"],
+        "default": "false"
+      }
+    },
+    "required": ["BACKUP_ROOT"]
+  }
+}
