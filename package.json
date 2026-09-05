@@ -1,0 +1,91 @@
+{
+  "name": "bkprules",
+  "displayName": "BKPrules",
+  "description": "Backup automatico da pasta .cursor (rules, commands, hooks) para um local seguro. Observa alteracoes em tempo real e funciona com multi-root.",
+  "version": "0.2.0",
+  "publisher": "alfieri22",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alfieri22/plugin-bkprules.git"
+  },
+  "homepage": "https://github.com/alfieri22/plugin-bkprules",
+  "bugs": {
+    "url": "https://github.com/alfieri22/plugin-bkprules/issues"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["Other"],
+  "keywords": ["cursor", "backup", "rules", ".cursor"],
+  "icon": "resources/icons/icon.png",
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "bkprules.configureBackupRoot",
+        "title": "BKPrules: Configurar pasta de backup"
+      },
+      {
+        "command": "bkprules.syncNow",
+        "title": "BKPrules: Sincronizar agora"
+      },
+      {
+        "command": "bkprules.addToGitignore",
+        "title": "BKPrules: Adicionar .cursor ao .gitignore"
+      },
+      {
+        "command": "bkprules.toggleEnabled",
+        "title": "BKPrules: Ativar/Desativar backup"
+      },
+      {
+        "command": "bkprules.createCursorFolder",
+        "title": "BKPrules: Criar pasta .cursor no projeto"
+      }
+    ],
+    "configuration": {
+      "title": "BKPrules",
+      "properties": {
+        "bkprules.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ativa ou desativa o backup automatico da pasta .cursor."
+        },
+        "bkprules.backupRoot": {
+          "type": "string",
+          "default": "",
+          "description": "Pasta na maquina onde os backups serao salvos (cada projeto em .bkprules/{nome-do-projeto}/)."
+        },
+        "bkprules.addToGitignore": {
+          "type": "boolean",
+          "default": false,
+          "description": "Adiciona .cursor/ ao .gitignore dos projetos abertos."
+        },
+        "bkprules.debounceMs": {
+          "type": "number",
+          "default": 400,
+          "minimum": 100,
+          "maximum": 5000,
+          "description": "Debounce (ms) para eventos duplicados do FileSystemWatcher."
+        },
+        "bkprules.offerCreateCursor": {
+          "type": "boolean",
+          "default": true,
+          "description": "Se nao existir pasta .cursor no projeto, pergunta se deseja criar."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.0.0",
+    "typescript": "^5.4.0"
+  }
+}

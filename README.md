@@ -1,47 +1,63 @@
-# plugin-bkprules
+# BKPrules
 
-Plugin para backup e reutilização das regras do Cursor. Mantém uma cópia local da pasta `.cursor`, permitindo recuperar suas regras mesmo após a exclusão do projeto ou quando `.cursor` está no `.gitignore`.
+Extensao para **Cursor / VS Code** que faz backup **automatico** da pasta `.cursor` de cada projeto aberto (rules, commands, hooks, etc.) para um local seguro na sua maquina.
 
-Repositório no formato oficial de plugins do Cursor. Contém o plugin **bkprules**.
+Nao precisa rodar sync manual: apos configurar a pasta de backup, qualquer criacao/edicao/exclusao em `.cursor` e espelhada em tempo real.
 
-A extensão VS Code original permanece em outro repositório/pasta (`BKPrules`) e não faz parte deste pacote.
+## O que faz
 
-## Plugin incluído
+1. Na primeira ativacao, pede a **pasta de backup** e se deve adicionar `.cursor/` ao `.gitignore`
+2. Ao abrir um projeto (pasta unica, multi-root ou workspace):
+   - Se existir `.cursor` → inicia observacao continua e faz sync inicial
+   - Se **nao** existir → pergunta se deseja **criar** a pasta `.cursor`
+3. Espelha `{projeto}/.cursor/` → `{backupRoot}/.bkprules/{nome-do-projeto}/`
+4. Multi-projeto: cada pasta aberta tem seu proprio destino (nome do projeto; hash se houver colisao)
+5. Fluxo unidirecional: nunca altera o projeto a partir do backup
 
-- **bkprules**: espelha `{projeto}/.cursor/` para `{BACKUP_ROOT}/.bkprules/{nome-do-projeto}/`
-
-## Requisitos
-
-- Node.js no PATH (os hooks e commands usam scripts `.mjs`)
-- Variável `BACKUP_ROOT` configurada em **Customize → Plugins → BKPrules → Configure**
-
-## Validação
+## Instalacao local (VSIX)
 
 ```bash
-node scripts/validate-template.mjs
+npm install
+npm run compile
+npm run package
 ```
 
-## Teste local
+Isso gera `bkprules-0.2.0.vsix`. No Cursor:
 
-1. Copie ou crie um symlink de `plugins/bkprules` para `~/.cursor/plugins/local/bkprules`
-2. Execute **Developer: Reload Window**
-3. Em Customize, confirme o plugin e configure `BACKUP_ROOT`
+1. `Ctrl+Shift+P` → **Extensions: Install from VSIX...**
+2. Selecione o arquivo `.vsix`
+3. Recarregue a janela se pedido
 
-## Publicação
+Se voce testou antes o plugin Local em `~/.cursor/plugins/local/bkprules`, desinstale/remova essa pasta para nao misturar os dois formatos.
 
-1. Este repositório precisa estar público no GitHub
-2. Envie o link em [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish)
+## Configuracao
 
-## Estrutura
+| Setting | Descricao |
+|---|---|
+| `bkprules.enabled` | Liga/desliga (default: `true`) |
+| `bkprules.backupRoot` | Pasta de destino dos backups |
+| `bkprules.addToGitignore` | Adiciona `.cursor/` ao `.gitignore` |
+| `bkprules.offerCreateCursor` | Pergunta se deve criar `.cursor` quando faltar |
+| `bkprules.debounceMs` | Debounce dos eventos de arquivo (default: 400) |
 
-```text
-.cursor-plugin/marketplace.json
-plugins/bkprules/
-scripts/validate-template.mjs
+Comandos uteis:
+
+- **BKPrules: Configurar pasta de backup**
+- **BKPrules: Criar pasta .cursor no projeto**
+- **BKPrules: Sincronizar agora** (opcional; o watcher ja cobre o dia a dia)
+- **BKPrules: Adicionar .cursor ao .gitignore**
+- **BKPrules: Ativar/Desativar backup**
+
+## Desenvolvimento
+
+```bash
+npm install
+npm run compile
+npm run watch
 ```
 
-Para adicionar outro plugin, veja [docs/add-a-plugin.md](docs/add-a-plugin.md).
+Pressione **F5** no Cursor/VS Code para abrir o Extension Development Host.
 
-## Licença
+## Licenca
 
 MIT

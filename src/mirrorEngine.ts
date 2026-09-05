@@ -1,16 +1,26 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
-import { log } from "./logger.mjs";
-import { isUnder, relativeFromRoot } from "./pathUtils.mjs";
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import { Logger } from './logger';
+import { isUnder, relativeFromRoot } from './pathUtils';
 
 const COPY_RETRIES = 8;
 const COPY_RETRY_MS = 80;
 
-function sleep(ms) {
+export interface MirrorTarget {
+  sourceCursorDir: string;
+  destRoot: string;
+  label: string;
+}
+
+async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function copyFileWithRetry(source, destination) {
+async function copyFileWithRetry(
+  source: string,
+  destination: string,
+  logger: Logger
+): Promise<boolean> {
   await fs.mkdir(path.dirname(destination), { recursive: true });
   for (let i = 1; i <= COPY_RETRIES; i++) {
     try {
@@ -18,7 +28,7 @@ async function copyFileWithRetry(source, destination) {
       return true;
     } catch (err) {
       if (i === COPY_RETRIES) {
-        log("ERROR", `Falha ao copiar ${source} -> ${destination}: ${String(err)}`);
+        logger.log('ERROR', `Falha ao copiar ${source} -> ${destination}: ${String(err)}`);
         return false;
       }
       await sleep(COPY_RETRY_MS);
@@ -27,10 +37,9 @@ async function copyFileWithRetry(source, destination) {
   return false;
 }
 
-async function walkDir(dir) {
-  const results = [];
-
-  async function walk(current) {
+async function walkDir(dir: string): Promise<string[]> {
+  const results: string[] = [];
+  async function walk(current: string): Promise<void> {
     let entries;
     try {
       entries = await fs.readdir(current, { withFileTypes: true });
@@ -47,18 +56,20 @@ async function walkDir(dir) {
       }
     }
   }
-
   await walk(dir);
   return results;
 }
 
-export async function syncMirror(target) {
+export async function syncMirror(
+  target: MirrorTarget,
+  logger: Logger
+): Promise<void> {
   const { sourceCursorDir, destRoot } = target;
 
   try {
     await fs.access(sourceCursorDir);
   } catch {
-    log("SKIP", `Origem inexistente: ${sourceCursorDir}`);
+    logger.log('SKIP', `Origem inexistente: ${sourceCursorDir}`);
     return;
   }
 
@@ -74,10 +85,10 @@ export async function syncMirror(target) {
     const stat = await fs.stat(src);
     if (stat.isDirectory()) {
       await fs.mkdir(dst, { recursive: true });
-      log("SYNC-DIR", dst);
+      logger.log('SYNC-DIR', `${dst}`);
     } else {
-      await copyFileWithRetry(src, dst);
-      log("SYNC-FILE", `${src} -> ${dst}`);
+      await copyFileWithRetry(src, dst, logger);
+      logger.log('SYNC-FILE', `${src} -> ${dst}`);
     }
   }
 
@@ -85,7 +96,7 @@ export async function syncMirror(target) {
     const destPaths = await walkDir(destRoot);
     destPaths.sort((a, b) => b.length - a.length);
     for (const dst of destPaths) {
-      if (path.basename(dst) === ".bkprules-source") {
+      if (path.basename(dst) === '.bkprules-source') {
         continue;
       }
       const rel = relativeFromRoot(dst, destRoot);
@@ -97,7 +108,7 @@ export async function syncMirror(target) {
         await fs.access(src);
       } catch {
         await fs.rm(dst, { recursive: true, force: true });
-        log("SYNC-DELETE", dst);
+        logger.log('SYNC-DELETE', dst);
       }
     }
   } catch {
@@ -105,7 +116,12 @@ export async function syncMirror(target) {
   }
 }
 
-export async function mirrorFileCreatedOrChanged(target, filePath, action) {
+export async function mirrorFileCreatedOrChanged(
+  target: MirrorTarget,
+  filePath: string,
+  logger: Logger,
+  action: 'CREATED' | 'CHANGED'
+): Promise<void> {
   if (!isUnder(filePath, target.sourceCursorDir)) {
     return;
   }
@@ -118,24 +134,28 @@ export async function mirrorFileCreatedOrChanged(target, filePath, action) {
     const dst = path.join(target.destRoot, rel);
     if (stat.isDirectory()) {
       await fs.mkdir(dst, { recursive: true });
-      log(action, `DIR ${filePath} -> ${dst}`);
+      logger.log(action, `DIR ${filePath} -> ${dst}`);
       return;
     }
-    if (await copyFileWithRetry(filePath, dst)) {
-      log(action, `${filePath} -> ${dst}`);
+    if (await copyFileWithRetry(filePath, dst, logger)) {
+      logger.log(action, `${filePath} -> ${dst}`);
     }
   } catch {
     // file may have been deleted between event and handler
   }
 }
 
-export async function mirrorFileDeleted(target, filePath) {
+export async function mirrorFileDeleted(
+  target: MirrorTarget,
+  filePath: string,
+  logger: Logger
+): Promise<void> {
   if (!isUnder(filePath, target.sourceCursorDir)) {
     return;
   }
   try {
     await fs.access(filePath);
-    log("SKIP", `Origem ainda existe, backup nao excluido: ${filePath}`);
+    logger.log('SKIP', `Origem ainda existe, backup nao excluido: ${filePath}`);
     return;
   } catch {
     // expected
@@ -148,7 +168,7 @@ export async function mirrorFileDeleted(target, filePath) {
   const dst = path.join(target.destRoot, rel);
   try {
     await fs.rm(dst, { recursive: true, force: true });
-    log("DELETED", `${filePath} -> removeu ${dst}`);
+    logger.log('DELETED', `${filePath} -> removeu ${dst}`);
   } catch {
     // already gone
   }
