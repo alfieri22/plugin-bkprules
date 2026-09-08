@@ -1,7 +1,7 @@
 {
   "name": "bkprules",
   "displayName": "BKPrules",
-  "description": "Backup automatico da pasta .cursor (rules, commands, hooks) para um local seguro. Observa alteracoes em tempo real e funciona com multi-root.",
+  "description": "Backup automático da pasta .cursor para um local seguro. Configure a pasta de destino uma vez; alterações em .cursor são espelhadas em tempo real (multi-projeto).",
   "version": "0.2.0",
   "publisher": "alfieri22",
   "license": "MIT",
@@ -50,29 +50,29 @@
         "bkprules.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Ativa ou desativa o backup automatico da pasta .cursor."
+          "description": "Ativa ou desativa o backup automático da pasta .cursor."
         },
         "bkprules.backupRoot": {
           "type": "string",
           "default": "",
-          "description": "Pasta na maquina onde os backups serao salvos (cada projeto em .bkprules/{nome-do-projeto}/)."
+          "description": "Pasta na máquina onde os backups serão salvos. Cada projeto fica em .bkprules/{nome-do-projeto}/."
         },
         "bkprules.addToGitignore": {
           "type": "boolean",
           "default": false,
-          "description": "Adiciona .cursor/ ao .gitignore dos projetos abertos."
+          "description": "Quando ativo, adiciona .cursor/ ao .gitignore dos projetos abertos."
         },
         "bkprules.debounceMs": {
           "type": "number",
           "default": 400,
           "minimum": 100,
           "maximum": 5000,
-          "description": "Debounce (ms) para eventos duplicados do FileSystemWatcher."
+          "description": "Atraso em milissegundos para agrupar eventos duplicados de arquivo (padrão: 400)."
         },
         "bkprules.offerCreateCursor": {
           "type": "boolean",
           "default": true,
-          "description": "Se nao existir pasta .cursor no projeto, pergunta se deseja criar."
+          "description": "Se o projeto não tiver pasta .cursor (e o backup já estiver configurado), pergunta se deseja criar."
         }
       }
     }

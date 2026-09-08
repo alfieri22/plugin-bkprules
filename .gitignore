@@ -5,3 +5,6 @@ out/
 Thumbs.db
 *.log
 .vscode-test/
+
+# Cursor local rules (BKPrules)
+.cursor/
